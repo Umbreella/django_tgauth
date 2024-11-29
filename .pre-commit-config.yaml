@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: python
+        types_or: [ python, pyi ]
+        args: [ "--ignore-missing-imports", "--scripts-are-modules" ]
+
+      - id: ruff-check
+        name: ruff-check
+        entry: ruff check
+        language: python
+        types_or: [ python, pyi ]
+
+      - id: ruff-format
+        name: ruff-format
+        entry: ruff format
+        language: python
+        types_or: [ python, pyi ]
