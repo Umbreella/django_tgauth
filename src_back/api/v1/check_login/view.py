@@ -1,9 +1,9 @@
 from typing import Type, Optional
 
 from django.contrib.auth import login
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.utils import timezone
-from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import BasePermission, AllowAny
 from rest_framework.response import Response
@@ -36,17 +36,14 @@ class CheckLoginAPIView(CreateAPIView):
         )
 
         if not login_token:
-            return Response(
-                data={'status': 'not valid token'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            raise ValidationError('not valid token')
 
         response: HttpResponse
 
         if login_token.user:
             login(request, login_token.user)
             login_token.expired_at = timezone.now()
-            response = HttpResponseRedirect('/')
+            response = Response(data={'redirect_url': '/'})
         else:
             response = Response()
 

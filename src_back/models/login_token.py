@@ -10,6 +10,11 @@ from django.db.models import (
     UniqueConstraint,
 )
 from django.utils import timezone
+from django.utils.crypto import get_random_string
+
+
+def get_token() -> str:
+    return get_random_string(64)
 
 
 def get_created_at() -> datetime:
@@ -17,11 +22,11 @@ def get_created_at() -> datetime:
 
 
 def get_expired_at() -> datetime:
-    return timezone.now() + timedelta(seconds=2.5 * 60)
+    return timezone.now() + timedelta(minutes=20)
 
 
 class LoginToken(Model):
-    token: str = CharField(max_length=255)
+    token: str = CharField(max_length=64, default=get_token)
     created_at: datetime = DateTimeField(default=get_created_at)
     expired_at: datetime = DateTimeField(default=get_expired_at)
     user = ForeignKey(

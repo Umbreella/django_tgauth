@@ -13,23 +13,25 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY: str = (
-    'django-insecure-4g!cn9i!ek3veme61#b%568jr3$3h84gdz-81f#_e@0zr_(pvl'
-)
+SECRET_KEY: str = os.getenv('SECRET_KEY', '')
+
+TG_BOT_NAME: str = os.getenv('TG_BOT_NAME', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG: bool = True
+DEBUG: bool = bool(os.getenv('DEBUG', 0))
 
-ALLOWED_HOSTS: list[str] = []
-
+ALLOWED_HOSTS: list[str] = os.getenv('ALLOWED_HOSTS', '').split(' ')
 
 # Application definition
 
@@ -57,7 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF: str = 'src_back.api.urls'
+ROOT_URLCONF: str = 'src_back.urls'
 
 TEMPLATES = [
     {
@@ -79,7 +81,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src_back.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -89,7 +90,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -109,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -121,7 +120,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -131,3 +129,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ATOMIC_REQUESTS: bool = True

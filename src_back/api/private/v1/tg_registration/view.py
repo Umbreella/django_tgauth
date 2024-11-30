@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Optional
 
 from django.utils import timezone
 from rest_framework.generics import CreateAPIView
@@ -19,20 +19,33 @@ class TgRegistrationAPIView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer: TgRegistrationSerializer = self.get_serializer(
-            data=request.data
+            data=request.data,
         )
         serializer.is_valid(raise_exception=True)
 
         token: str = serializer.validated_data['token']
 
-        if login_token := LoginToken.objects.select_for_update(
-            token=token,
-            user__isnull=True,
-        ).first():
-            user: User = User.objects.create_user(
-                provider='tg',
-                **serializer.validated_data['user_data'],
+        if (
+            login_token := LoginToken.objects.select_for_update()
+            .filter(
+                token=token,
+                expired_at__gt=timezone.now(),
+                user__isnull=True,
             )
+            .first()
+        ):
+            user: Optional[User] = User.objects.filter(
+                provider='tg',
+                external_id=serializer.validated_data['user_data'][
+                    'external_id'
+                ],
+            ).first()
+
+            if user is None:
+                user = User.objects.create_user(
+                    provider='tg',
+                    **serializer.validated_data['user_data'],
+                )
 
             login_token.user = user
             login_token.used_at = timezone.now()

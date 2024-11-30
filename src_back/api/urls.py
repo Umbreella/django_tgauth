@@ -15,13 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
 from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-
-from src_back.api.v1.login.view import OverrideLoginView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -55,8 +52,6 @@ swagger_urlpatterns = [
 ]
 
 urlpatterns = [
-    path('api/private/', include('src_back.api.private.urls')),
-    path('api/v1.0/', include('src_back.api.v1.urls')),
-    path('login', OverrideLoginView.as_view()),
-    path('admin/', admin.site.urls),
+    path('private/', include('src_back.api.private.urls')),
+    path('v1.0/', include('src_back.api.v1.urls')),
 ] + swagger_urlpatterns

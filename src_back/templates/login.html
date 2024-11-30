@@ -1,10 +1,72 @@
 {% extends "admin/login.html" %}
 
 {% block content %}
-  <div class="login-form-container">
-    {{ form.as_p }}
+    <div class="login-form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Войти</button>
+        </form>
 
-    <button type="submit" class="btn btn-primary">Войти через Telegram</button>
+        <h3>or</h3>
 
-  </div>
+        <button class="btn btn-primary" value="{{ login_token }}" onclick="tg_login(this)">Войти через Telegram</button>
+    </div>
+
+    <script>
+        function tg_login(element) {
+            const loginToken = element.value;
+
+            let remainingTime = 228;
+
+            window.open(`https://t.me/{{ tg_bot_name }}?start=${loginToken}`, '_blank');
+
+            const url = `${window.location.origin}/api/v1.0/checkLogin`;
+            const timerInterval = setInterval(() => {
+                if (remainingTime > 0) {
+                    fetch(url, {
+                        method: 'POST',
+                        body: JSON.stringify({ token: loginToken }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        if (response.status === 400) {
+                            clearInterval(timerInterval);
+                            alert("Обновите страницу");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при отправке запроса', error);
+                    });
+                }
+                else {
+                    clearInterval(timerInterval);
+                }
+                remainingTime--;
+            }, 5000);
+        }
+
+        function run_timer(seconds) {
+            let remainingTime = seconds;
+            const timerInterval = setInterval(() => {
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Обновите страницу");
+                }
+                remainingTime--;
+            }, 1000);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            run_timer(1140);
+        });
+    </script>
 {% endblock %}
