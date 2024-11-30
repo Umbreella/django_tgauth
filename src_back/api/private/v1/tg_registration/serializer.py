@@ -1,5 +1,13 @@
-from rest_framework.serializers import Serializer
+from rest_framework.serializers import Serializer, CharField
+
+
+class UserSerializer(Serializer):
+    username: str = CharField()
+    first_name: str = CharField(required=False)
+    last_name: str = CharField(required=False)
+    external_id: str = CharField()
 
 
 class TgRegistrationSerializer(Serializer):
-    pass
+    token: str = CharField()
+    user_data: UserSerializer = UserSerializer()

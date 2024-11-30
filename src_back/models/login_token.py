@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db.models import (
     Model,
     CharField,
@@ -24,13 +24,15 @@ class LoginToken(Model):
     token: str = CharField(max_length=255)
     created_at: datetime = DateTimeField(default=get_created_at)
     expired_at: datetime = DateTimeField(default=get_expired_at)
-    user: User = ForeignKey(User, null=True, blank=True, on_delete=CASCADE)
+    user = ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=CASCADE
+    )
     used_at: datetime = DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=["token"],
-                name="unique_login_token__token",
+                fields=['token'],
+                name='unique_login_token__token',
             ),
         ]

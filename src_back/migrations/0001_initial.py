@@ -15,33 +15,33 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="LoginToken",
+            name='LoginToken',
             fields=[
                 (
-                    "id",
+                    'id',
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name="ID",
+                        verbose_name='ID',
                     ),
                 ),
-                ("token", models.CharField(max_length=255)),
+                ('token', models.CharField(max_length=255)),
                 (
-                    "created_at",
+                    'created_at',
                     models.DateTimeField(
                         default=src_back.models.login_token.get_created_at
                     ),
                 ),
                 (
-                    "expired_at",
+                    'expired_at',
                     models.DateTimeField(
                         default=src_back.models.login_token.get_expired_at
                     ),
                 ),
-                ("used_at", models.DateTimeField(blank=True, null=True)),
+                ('used_at', models.DateTimeField(blank=True, null=True)),
                 (
-                    "user",
+                    'user',
                     models.ForeignKey(
                         blank=True,
                         null=True,
@@ -51,9 +51,9 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "constraints": [
+                'constraints': [
                     models.UniqueConstraint(
-                        fields=("token",), name="unique_login_token__token"
+                        fields=('token',), name='unique_login_token__token'
                     )
                 ],
             },

@@ -1,7 +1,7 @@
 from django.urls import path
 
-from src_back.api.v1.login.view import OverrideLoginView
+from src_back.api.v1.check_login.view import CheckLoginAPIView
 
 urlpatterns = [
-    path("login", OverrideLoginView.as_view()),
+    path('checkLogin', CheckLoginAPIView.as_view()),
 ]

@@ -2,4 +2,4 @@ from django.contrib.auth.views import LoginView
 
 
 class OverrideLoginView(LoginView):
-    template_name = "login.html"
+    template_name = 'login.html'
